@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+[%- include 'meta.tt' %]
+[%- if settings.favicon_image_uri %]
+<link rel="shortcut icon" type="image/x-icon" href="[% settings.favicon_image_uri %]" />
+[%- end %]
+[% 'style.css' | asset_uri | stylesheet_tag %]
+[% 'jquery-ui/themes/base/jquery.ui.all.css' | global_asset_uri | stylesheet_tag %]
+[% 'jquery/jquery.cycle.all.min.js' | global_asset_uri | script_tag %]
+[% 'jquery-ui/jquery.ui.core.js' | global_asset_uri | script_tag %]
+[% 'jquery-ui/jquery.ui.widget.js' | global_asset_uri | script_tag %]
+[% 'jquery-ui/jquery.ui.position.js' | global_asset_uri | script_tag %]
+[% 'jquery-ui/jquery.ui.tooltip.js' | global_asset_uri | script_tag %]
+[% 'jquery/fancybox/2/jquery.fancybox.css' | global_asset_uri | stylesheet_tag %]
+[% 'jquery/markitup/markdown/style.css' | global_asset_uri | stylesheet_tag %]
+[% 'jquery/jquery.min.js' | global_asset_uri | script_tag %]
+[% 'jquery/fancybox/2/jquery.fancybox.pack.js' | global_asset_uri | script_tag %]
+[% 'jquery/jquery.bxslider.min.js' | global_asset_uri | script_tag %]
+[% body_bg = 'body_bg.jpg' | asset_uri  %]
+[% content_for_header %]
+</head>
+<body style="background: url('[% settings.body_bg_uri || body_bg %]') [% settings.body_bg_repeat || "no-repeat" %]  top center;">
+  
+<script type="text/javascript" charset="utf-8">
+  $j = jQuery.noConflict();
+
+  // tooltip for login form
+ /* $j(function() {
+  function enable() {
+      $j("form[name=login]").tooltip({
+        position: {
+          my: "right center",
+          at: "left center",
+          offset: "-2 0"
+        }
+      });
+    }
+    enable();
+  });*/
+
+    // fancybox
+    $j(document).ready(function() {
+      $j(".fancybox a").fancybox();
+    });
+</script>
+
+
+<div id="outer_wrapper">
+  <div id="header_wrapper">
+    <div class="header">
+      <div class="logo_wrapper">
+        <a href="[% shop.uri %]">
+          <span class="logo">
+            [%- if settings.logo_image_uri %]
+            [% settings.logo_image_uri | image_tag %]
+            [%- else %]
+            <span>[% shop.name | html %]</span>
+            <small>[% shop.domain %]</small>
+            [%- end %]
+          </span>
+        </a>
+      </div>
+      <div class="nav_wrapper">
+        <div class="links">
+          [% '<span class="icons facebook"></span>' | link_to (settings.facebook_uri, settings.facebook_uri, '_blank') if settings.facebook_uri %]
+          [% '<span class="icons twitter"></span>' | link_to (settings.twitter_uri, settings.twitter_uri, '_blank') if settings.twitter_uri %]
+        </div>
+        <div class="nav">
+          [%- foreach link in linklists.main_menu.links %]
+          [%- link.name = link.name | html %]
+          [% '<span class="medium_curved">' _ link.name _ '</span>' | link_to (link.uri, link.name, link.target) %]
+          [%- end %]
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="content_wrapper">
+    <div class="container">
+      <div class="content">
+        <div id="sidebar1">
+          <div class="sidebar_wrapper">
+            <div class="sidebar">
+              [%- if !settings.form_login %]
+              <div class="account_wrapper">
+                <h4>[% 'My Account' | loc %]</h4>
+                <div class="account">
+                  [%- unless customer.is_logged_in %]
+                  <form action="[% uri_for('/customer/login', { 'to' => req.uri }) %]" method="post" name="login">
+                    <fieldset>
+                      <input type="text" class="text" title="[% 'Email' | loc %]" name="login" />
+                      <input type="password" class="text" title="[% 'Password' | loc %]" name="password" />
+                      <input type="submit" class="small_curved button" name="submit" value="Login" />
+                    </fieldset>
+                  </form>
+                  [%- else %]
+                  <ul>
+                    [%- foreach link in customer.links %]
+                    <li>[% link.name | html | link_to (link.uri) %]</li>
+                    [%- end %]
+                  </ul>
+                  [%- end %]
+                </div>
+                <div class="footer"></div>
+              </div>
+              [%- end %]          
+
+              [%- unless customer.is_logged_in %]
+              <a href="[% uri_for('/customer/signup', { 'to' => req.uri }) %]"><span class="widgets signup"></span></a>
+              [%- end %]
+
+              <div class="category_wrapper">
+                <h4>[% 'Products' | loc %]</h4>
+                <div class="category">
+                  <div class="inner">
+                    <form action="[% uri_for('/collection/all') %]" method="get" name="search" id="search">
+                      <fieldset>
+                        <input type="text" class="text" name="q" />
+                      </fieldset>
+                    </form>    
+                    [%- if linklists.${settings.linklist_sidebar1}.links.size  %]
+                    <div class="collection">
+                      <h5 class="topic5" title="[%- linklists.${settings.linklist_sidebar1}.name %]"><span>[%- linklists.${settings.linklist_sidebar1}.name %]</span></h5>
+                      <ul >
+                        [%- foreach link in linklists.${settings.linklist_sidebar1}.links %]
+                        <li>[% link.name | html | link_to (link.uri, link.name) %]</li>
+                        [%- end %]
+                      </ul>
+                    </div>
+                    [%- end %]
+                    
+                    [%- if !settings.collection_enabled %]
+                    <div class="collection nav-left">
+                      <h5 class="topic5" title="[% 'Browse by Collection' | loc %]"><span>Collection</span></h5>
+                        [%- if linklists.collections.links %]
+                        <ul>
+                          [%- foreach link in linklists.collections.links %]
+                          <li>[% link.name | html | link_to (link.uri, link.name) %]</li>
+                          [%- end %]
+                        </ul>
+                        [%- else %]
+                        <p>คุณต้องเพิ่มคอลเลคชันสินค้าเข้าลิงค์ลิสต์แฮนเดิล "collections"</p>
+                        [%- end %]
+                    </div>
+                    [%- end %]
+                    
+                    [%- if settings.brand_style && collection.handle && collection.handle != 'all' %]
+                    <div class="brand nav-left">
+                      <h5 class="topic5" title="[% 'Browse by Brand' | loc %]"><span>[% 'Browse by Brand' | loc %]</span></h5>
+                        [%- if !settings.brand_style || settings.brand_style == 1 %]
+                        <form action="[% req.url %]" method="get" name="brand">
+                          <fieldset>            
+                          <select name="brand" class="select" onchange='location.href=this.form.brand.options[this.form.brand.selectedIndex].value;'>
+                            <option value="[% collection.uri %]">- [% 'Any brand' | loc %] -</option>
+                            [%- foreach vendor in collection.vendors %]
+                              <option value="[% uri_for ('/collection', collection.slug, {vendor = vendor}) %]" [% 'selected="selected"' if current_vendor == vendor %]>[% vendor | html %]</option>
+                            [%- end %]
+                          </select>
+                         </fieldset>            
+                        </form>
+                        [%- else %]
+                        <ul class="list">
+                          [%- foreach vendor in collection.vendors %]
+                            <li [% 'class="active"' if current_vendor == vendor %]>[% vendor | html | link_to uri_for ('/collection', collection.slug, {vendor = vendor}) %]</li>
+                          [%- end %]
+                        </ul>
+                        [%- end %]
+                    </div>
+                    [%- end %]
+                    
+                    [%- if settings.type_style && collection.handle && collection.handle != 'all' %]
+                    <div class="type nav-left">
+                      <h5 class="topic5" title="[% 'Browse by Type' | loc %]"><span>[% 'Browse by Type' | loc %]</span></h5>
+                        [%- if !settings.type_style || settings.type_style == 1 %]
+                        <form action="[% req.url %]" method="get" name="type">
+                          <fieldset>            
+                          <select name="type" class="select" onchange='location.href=this.form.type.options[this.form.type.selectedIndex].value;'>
+                            <option value="[% collection.uri %]">- [% 'Any type' | loc %] -</option>
+                            [%- foreach type in collection.types %]
+                              <option value="[% uri_for ('/collection', collection.slug, {type = type}) %]" [% 'selected="selected"' if current_type == type %]>[% type | html %]</option>
+                            [%- end %]
+                          </select>
+                         </fieldset>                
+                        </form>
+                        [%- else %]
+                        <ul class="list">
+                          [%- foreach type in collection.types %]
+                            <li [% 'class="active"' if current_type == type %]>[% type | html | link_to uri_for ('/collection', collection.slug, {type = type}) %]</li>
+                          [%- end %]
+                        </ul>
+                        [%- end %]
+                    </div>  
+                    [%- end %] 
+                  </div>
+                </div>
+                <div class="footer"></div>
+              </div>
+
+              [%- if linklists.${settings.linklist_sidebar2}.links.size %]
+              <div class="collection">
+                <h5 class="topic5" title="[%- linklists.${settings.linklist_sidebar2}.name %]"><span>[%- linklists.${settings.linklist_sidebar2}.name %]</span></h5>
+                <ul >
+                  [%- foreach link in linklists.${settings.linklist_sidebar2}.links %]
+                  <li>[% link.name | html | link_to (link.uri, link.name) %]</li>
+                  [%- end %]
+                </ul>
+              </div>
+              [%- end %]
+              
+              [%- if linklists.${settings.linklist_sidebar3}.links.size %]
+              <div class="collection">
+                <h5 class="topic5" title="[%- linklists.${settings.linklist_sidebar3}.name %]"><span>[%- linklists.${settings.linklist_sidebar3}.name %]</span></h5>
+                <ul >
+                  [%- foreach link in linklists.${settings.linklist_sidebar3}.links %]
+                  <li>[% link.name | html | link_to (link.uri, link.name) %]</li>
+                  [%- end %]
+                </ul>
+              </div>
+              [%- end %]   
+
+              [%- if settings.stats_enabled %]
+              <div class="stat widgets">
+                <dl>
+                  <dt>[% 'Since' | loc %]</dt>
+                  <dd>[% shop.created_at | date ('%F') %]</dd>
+                  <dt>[% 'Visitors' | loc %]</dt>
+                  <dd>[% shop.visitor_count || 0 | commify %]</dd>
+                  <dt>[% 'Products' | loc %]</dt>
+                  <dd>[% shop.product_count || 0 | commify %]</dd>
+                </dl>
+              <div class="clear"></div>
+              </div>
+              [%- end %]
+              
+              [%- if settings.thailand_post_track_enabled %]
+              [% '<span class="widgets tracking"></span>' | link_to ('http://track.thailandpost.co.th', 'Thailand Post Track &amp; Trace', '_blank') %]
+              [%- end %]
+              [%- if settings.facebook_uri && settings.like_box_enabled %]
+              <div class="sidebar facebook_like_box">
+                <iframe src="http://www.facebook.com/plugins/likebox.php?href=[% settings.facebook_uri | uri %]&amp;width=190&amp;colorscheme=light&amp;border_color=none&amp;show_faces=[% settings.like_box_show_faces ? 'true' : 'false' %]&amp;stream=[% settings.like_box_show_stream ? 'true' : 'false' %]&amp;header=[% settings.like_box_show_header ? 'true' : 'false' %]&amp;height=[% settings.like_box_height ? settings.like_box_height : '556' %]" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:192px; height:[% settings.like_box_height ? settings.like_box_height : '556' %]px;"></iframe>
+              </div>
+              [%- end %]              
+
+              <!-- user sidebar -->
+              <div class="sidebar banner_wrapper">              
+              [%- if linklists.sidebar %]
+                <ul>
+                  [%- foreach link in linklists.sidebar.links %]
+                  [%- link.name = link.name | html %]
+                  <li>[% link.featured_image.src | image_uri | image_tag | link_to (link.uri, link.name, link.target) %]</li>
+                  [%- end %]
+                </ul>
+              [%- end %]
+              </div>              
+              <!-- /user sidebar -->
+            </div>
+          </div>
+        </div>
+
+        <div id="main_wrapper">
+          <div id="main">
+            <div class="highlight_wrapper">
+              <div class="highlight">
+                  <ul id="highlight">
+                    [%- if linklists.${settings.linklist_highlight}.links.size || linklists.highlight.links.size %]
+                    [%- links = linklists.${settings.linklist_highlight}.links || linklists.highlight.links %]
+                    [%- foreach link in links %]
+                    [% next if !link.featured_image %]                    
+                    <li>
+                      <a href="[% link.uri %]" title="[% link.name | html %]">
+                        <span style="background-image: url('[% link.featured_image.src | image_uri %]')"></span>
+                      </a>
+                    </li>
+                    [%- end %]
+                    [%- else %]                  
+                    <li><span style="background-image: url('[% 'highlight_sample.png' | asset_uri %]')"></span></li>
+                    <li><span style="background-image: url('[% 'highlight_sample.png' | asset_uri %]')"></span></li>
+                    [%- end %]
+                  </ul>
+                  <script type="text/javascript" charset="utf-8">
+                  $j(function(){
+                    var slider = $j('#highlight').bxSlider({
+                      controls: false,
+                      displaySlideQty: 1,
+                      moveSlideQty: 1,
+                      pager: true,
+                      auto: true,
+                      pause: 6000
+                    });
+                  });
+                  </script>
+              </div>
+            </div>
+            <div>
+              [% content %]
+            </div>
+          </div>
+        </div>
+
+        <div id="sidebar2">
+          <div class="sidebar_wrapper">
+            <div class="sidebar">
+              [%- if  !settings.ecommerce_enabled %]                  
+              <a href="[% uri_for('/cart') %]" class="widgets cart_status">
+                <span>[% cart.total_quantity %] [% cart.total_quantity | pluralize ('item', 'items') | loc %]</span>
+              </a>
+              [%- end %]              
+            </div>
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+  </div>
+  <div id="footer_wrapper">
+    <div class="footer">
+      [%- if shop.dbd_account %]
+      <div class="widgets dbd">
+        <span>[% shop.dbd_account | seal_for_dbd %]</span>
+      </div>
+      [%- end %]
+      [%- if settings.phone_number %]
+      <span class="contact">[% settings.phone_number %]</span>
+      [%- else %]
+      <span class="welcome">[% 'Welcome' | loc %]</span>
+      [%- end %]
+      <div class="clear"></div>
+      <div id="footer">
+        <div class="nav">
+          [%- foreach link in linklists.footer.links %]
+          [%- link.name = link.name | html %]
+          [% link.name | link_to (link.uri, link.name, link.target) %]
+          [%- end %]
+        </div>
+        <div class="copyright">
+          &copy; [% now | date ('%Y') %] [% shop.name | html %]. [% powered_by_link %].
+        </div>
+      </div>
+    </div>
+  </div>
+  [% content_for_footer %]
+</div>
+</body>
+</html>
