@@ -132,7 +132,7 @@
                     
                     [%- if !settings.collection_enabled %]
                     <div class="collection nav-left">
-                      <h5 class="topic5" title="[% 'Browse by Collection' | loc %]"><span>Collection</span></h5>
+                      <h5 class="topic5" title="[% 'Browse by Collection' | loc %]"><span>[% 'Collections' | loc %]</span></h5>
                         [%- if linklists.collections.links %]
                         <ul>
                           [%- foreach link in linklists.collections.links %]
@@ -145,9 +145,20 @@
                     </div>
                     [%- end %]
                     
+                    [%- if linklists.${settings.linklist_sidebar2}.links.size %]
+                    <div class="collection">
+                      <h5 class="topic5" title="[%- linklists.${settings.linklist_sidebar2}.name %]"><span>[%- linklists.${settings.linklist_sidebar2}.name %]</span></h5>
+                      <ul >
+                        [%- foreach link in linklists.${settings.linklist_sidebar2}.links %]
+                        <li>[% link.name | html | link_to (link.uri, link.name) %]</li>
+                        [%- end %]
+                      </ul>
+                    </div>
+                    [%- end %]                    
+                    
                     [%- if settings.brand_style && collection.handle && collection.handle != 'all' %]
                     <div class="brand nav-left">
-                      <h5 class="topic5" title="[% 'Browse by Brand' | loc %]"><span>[% 'Browse by Brand' | loc %]</span></h5>
+                      <h5 class="topic5" title="[% 'Browse by Brand' | loc %]"><span>[% 'Brands' | loc %]</span></h5>
                         [%- if !settings.brand_style || settings.brand_style == 1 %]
                         <form action="[% req.url %]" method="get" name="brand">
                           <fieldset>            
@@ -171,7 +182,7 @@
                     
                     [%- if settings.type_style && collection.handle && collection.handle != 'all' %]
                     <div class="type nav-left">
-                      <h5 class="topic5" title="[% 'Browse by Type' | loc %]"><span>[% 'Browse by Type' | loc %]</span></h5>
+                      <h5 class="topic5" title="[% 'Browse by Type' | loc %]"><span>[% 'Types' | loc %]</span></h5>
                         [%- if !settings.type_style || settings.type_style == 1 %]
                         <form action="[% req.url %]" method="get" name="type">
                           <fieldset>            
@@ -191,33 +202,22 @@
                         </ul>
                         [%- end %]
                     </div>  
-                    [%- end %] 
+                    [%- end %]
+                    
+                    [%- if linklists.${settings.linklist_sidebar3}.links.size %]
+                    <div class="collection">
+                      <h5 class="topic5" title="[%- linklists.${settings.linklist_sidebar3}.name %]"><span>[%- linklists.${settings.linklist_sidebar3}.name %]</span></h5>
+                      <ul >
+                        [%- foreach link in linklists.${settings.linklist_sidebar3}.links %]
+                        <li>[% link.name | html | link_to (link.uri, link.name) %]</li>
+                        [%- end %]
+                      </ul>
+                    </div>
+                    [%- end %]                       
                   </div>
                 </div>
                 <div class="footer"></div>
               </div>
-
-              [%- if linklists.${settings.linklist_sidebar2}.links.size %]
-              <div class="collection">
-                <h5 class="topic5" title="[%- linklists.${settings.linklist_sidebar2}.name %]"><span>[%- linklists.${settings.linklist_sidebar2}.name %]</span></h5>
-                <ul >
-                  [%- foreach link in linklists.${settings.linklist_sidebar2}.links %]
-                  <li>[% link.name | html | link_to (link.uri, link.name) %]</li>
-                  [%- end %]
-                </ul>
-              </div>
-              [%- end %]
-              
-              [%- if linklists.${settings.linklist_sidebar3}.links.size %]
-              <div class="collection">
-                <h5 class="topic5" title="[%- linklists.${settings.linklist_sidebar3}.name %]"><span>[%- linklists.${settings.linklist_sidebar3}.name %]</span></h5>
-                <ul >
-                  [%- foreach link in linklists.${settings.linklist_sidebar3}.links %]
-                  <li>[% link.name | html | link_to (link.uri, link.name) %]</li>
-                  [%- end %]
-                </ul>
-              </div>
-              [%- end %]   
 
               [%- if settings.stats_enabled %]
               <div class="stat widgets">
