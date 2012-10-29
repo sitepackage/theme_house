@@ -241,19 +241,17 @@
                 <iframe src="http://www.facebook.com/plugins/likebox.php?href=[% settings.facebook_uri | uri %]&amp;width=190&amp;colorscheme=light&amp;border_color=none&amp;show_faces=[% settings.like_box_show_faces ? 'true' : 'false' %]&amp;stream=[% settings.like_box_show_stream ? 'true' : 'false' %]&amp;header=[% settings.like_box_show_header ? 'true' : 'false' %]&amp;height=[% settings.like_box_height ? settings.like_box_height : '556' %]" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:192px; height:[% settings.like_box_height ? settings.like_box_height : '556' %]px;"></iframe>
               </div>
               [%- end %]              
-
-              <!-- user sidebar -->
-              <div class="sidebar banner_wrapper">              
-              [%- if linklists.sidebar %]
-                <ul>
-                  [%- foreach link in linklists.sidebar.links %]
+            <div class="sidebar banner_wrapper">         
+              [%- if linklists.${settings.linklist_banner}.links.size %]
+              [%- links = linklists.${settings.linklist_banner}.links %]
+                [%- foreach link in links %]
+                  <ul>
                   [%- link.name = link.name | html %]
                   <li>[% link.featured_image.src | image_uri | image_tag | link_to (link.uri, link.name, link.target) %]</li>
-                  [%- end %]
-                </ul>
+                  </ul>
+                [%- end %]               
               [%- end %]
-              </div>              
-              <!-- /user sidebar -->
+            </div> 
             </div>
           </div>
         </div>
